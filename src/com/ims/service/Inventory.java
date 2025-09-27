@@ -1,7 +1,9 @@
 package com.ims.service;
 import com.ims.model.Product;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Inventory {
 
@@ -38,4 +40,60 @@ public class Inventory {
         System.out.println(p);
     }
     }
+
+    public Product searchProduct(String name){
+        for(Product p : productMap.values()){
+            if(p.getName().equalsIgnoreCase(name)){
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public List<Product> partialSearch(String partial){
+        List<Product> result = new ArrayList<>();
+        String query = partial.toLowerCase();
+
+        for(Product p : productMap.values()){
+            if(p.getName().toLowerCase().contains(query)){
+                result.add(p);
+            }
+        }
+        return result;
+    }
+
+    public List<Product> getProductsByCategory(String category){
+        List<Product> result = new ArrayList<>();
+
+        for(Product p : productMap.values()){
+            if (p.getCategory().equalsIgnoreCase(category)) {
+                result.add(p);    
+            }
+        }
+        return result;
+    }
+    
+    public List<Product> getProductsByPrice(double minPrice, double maxPrice){
+        List<Product> result = new ArrayList<>();
+
+        for(Product p : productMap.values()){
+            if (p.getPrice()>=minPrice && p.getPrice()<=maxPrice) {
+                result.add(p);    
+            }
+        }
+        return result;
+    }
+
+    
+    public List<Product> getAvailableProducts(){
+        List<Product> result = new ArrayList<>();
+
+        for(Product p : productMap.values()){
+            if (p.getQuantity()>0) {
+                result.add(p);    
+            }
+        }
+        return result;
+    }
+    
 }
