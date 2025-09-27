@@ -96,4 +96,28 @@ public class Inventory {
         return result;
     }
     
+    public void increaseStock(int productId, int qty){
+        if(!productMap.containsKey(productId)){
+            throw new IllegalArgumentException("Product not found!");
+        }
+            
+        productMap.get(productId).updateQuantity(qty);
+    }
+
+    public void decreaseStock(int productId, int qty){
+        if(!productMap.containsKey(productId)){
+            throw new IllegalArgumentException("Product not found!");
+        }
+        
+        productMap.get(productId).updateQuantity(-qty);
+    }
+
+    public void updateProductQuantity(int productId, int newQty){
+        if(!productMap.containsKey(productId)){
+            throw new IllegalArgumentException("Product not found!");
+        }
+
+        int change = newQty - productMap.get(productId).getQuantity();
+        productMap.get(productId).updateQuantity(change);
+    }
 }
