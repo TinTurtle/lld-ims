@@ -120,4 +120,16 @@ public class Inventory {
         int change = newQty - productMap.get(productId).getQuantity();
         productMap.get(productId).updateQuantity(change);
     }
+
+    public List<Product> getLowStockProducts(int threshold){
+        List<Product> result = new ArrayList<>();
+
+        for(Product p : productMap.values()){
+            if (p.getQuantity()<threshold) {
+                result.add(p);    
+            }
+        }
+        return result;
+    }
 }
+
