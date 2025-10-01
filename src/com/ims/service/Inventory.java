@@ -1,7 +1,9 @@
 package com.ims.service;
 import com.ims.model.Product;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -122,14 +124,30 @@ public class Inventory {
     }
 
     public List<Product> getLowStockProducts(int threshold){
-        List<Product> result = new ArrayList<>();
+        return productMap.values().stream()
+                .filter(p -> p.getQuantity()<threshold)
+                .toList();
+    }
 
-        for(Product p : productMap.values()){
-            if (p.getQuantity()<threshold) {
-                result.add(p);    
-            }
-        }
-        return result;
+    public List<Product> getProductsSortedByPrice(boolean ascending){
+        return productMap.values().stream()
+                .sorted(ascending
+                ?Comparator.comparing(Product::getPrice)
+                :Comparator.comparing(Product::getPrice).reversed())
+                .toList();
+    }
+
+    public List<Product> getProductsSortedByQuantity(boolean ascending){
+        return productMap.values().stream()
+                .sorted(ascending
+                ?Comparator.comparing(Product::getQuantity)
+                :Comparator.comparing(Product::getQuantity).reversed())
+                .toList();
+    }
+
+    public Map<String,List<Product>> groupProductsByCategory(){
+        return productMap.values().stream()
+                .collect(Collectors.groupingBy(Product::getCategory));
     }
 }
 
