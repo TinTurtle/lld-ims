@@ -10,6 +10,9 @@ public class Order {
     private List<OrderItem> items = new ArrayList<>();
     private double totalPrice = 0.0;
 
+    public double getTotalPrice(){
+        return totalPrice;
+    }
     public void addItem(Product p, int qty){
         OrderItem item = new OrderItem(p, qty);
         items.add(item);
