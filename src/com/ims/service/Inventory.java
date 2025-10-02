@@ -6,10 +6,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import com.ims.observer.StockObserver;
 
 public class Inventory {
 
     private Map<Integer, Product> productMap;
+    private List<StockObserver> observers = new ArrayList<>();
+    private int lowStockThreshold = 3;
+
     private Inventory(){
         productMap = new HashMap<>();
     }
@@ -112,6 +116,8 @@ public class Inventory {
         }
         
         productMap.get(productId).updateQuantity(-qty);
+
+        
     }
 
     public void updateProductQuantity(int productId, int newQty){
@@ -123,6 +129,7 @@ public class Inventory {
         productMap.get(productId).updateQuantity(change);
     }
 
+    //FILTERS
     public List<Product> getLowStockProducts(int threshold){
         return productMap.values().stream()
                 .filter(p -> p.getQuantity()<threshold)
@@ -148,6 +155,21 @@ public class Inventory {
     public Map<String,List<Product>> groupProductsByCategory(){
         return productMap.values().stream()
                 .collect(Collectors.groupingBy(Product::getCategory));
+    }
+
+    //Observers
+    public void addObserver(StockObserver observer){
+        observers.add(observer);
+    }
+
+    public void removeObserver(StockObserver observer){
+        observers.remove(observer);
+    }
+
+    public void notifyObserver(String message){
+        for(StockObserver observer : observers){
+            observer.update(message);
+        }
     }
 }
 
