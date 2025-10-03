@@ -108,7 +108,7 @@ public class Inventory {
             throw new IllegalArgumentException("Product not found!");
         }
         
-        Product product = productMap.get(productId));
+        Product product = productMap.get(productId);
             
         product.updateQuantity(qty);
 
