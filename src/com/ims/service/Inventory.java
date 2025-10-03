@@ -101,22 +101,39 @@ public class Inventory {
         }
         return result;
     }
-    
+    //increase stock checks for availability of the product and updates it
+    //after updating it notifies the observer if the stocck available after updation is lower than the threshold
     public void increaseStock(int productId, int qty){
         if(!productMap.containsKey(productId)){
             throw new IllegalArgumentException("Product not found!");
         }
+        
+        Product product = productMap.get(productId));
             
-        productMap.get(productId).updateQuantity(qty);
+        product.updateQuantity(qty);
+
+        if(product.getQuantity()<lowStockThreshold){
+            notifyObservers("Stock low for "+product.getName()+" (Remaining: "+product.getQuantity()+")" );
+        }
     }
 
+    //decreases the stock in the inventory and notifies the observers in a similar fashion to increase stock
     public void decreaseStock(int productId, int qty){
         if(!productMap.containsKey(productId)){
             throw new IllegalArgumentException("Product not found!");
         }
         
-        productMap.get(productId).updateQuantity(-qty);
+        Product product = productMap.get(productId);
 
+        if(product.getQuantity()<qty){
+            throw new IllegalArgumentException("Not enough Stock!");
+        }
+
+        product.updateQuantity(-qty);
+        
+        if(product.getQuantity()<lowStockThreshold){
+            notifyObservers("Stock low for "+product.getName()+" (Remaining: "+product.getQuantity()+")" );
+        }
         
     }
 
@@ -124,9 +141,14 @@ public class Inventory {
         if(!productMap.containsKey(productId)){
             throw new IllegalArgumentException("Product not found!");
         }
+        Product product = productMap.get(productId);
 
         int change = newQty - productMap.get(productId).getQuantity();
-        productMap.get(productId).updateQuantity(change);
+        product.updateQuantity(change);
+
+        if(product.getQuantity()<lowStockThreshold){
+            notifyObservers("Stock low for "+product.getName()+" (Remaining: "+product.getQuantity()+")" );
+        }
     }
 
     //FILTERS
@@ -166,7 +188,7 @@ public class Inventory {
         observers.remove(observer);
     }
 
-    public void notifyObserver(String message){
+    public void notifyObservers(String message){
         for(StockObserver observer : observers){
             observer.update(message);
         }
