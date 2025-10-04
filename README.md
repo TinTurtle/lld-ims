@@ -49,6 +49,11 @@ com.ims
 │
 ├── model
 │   └── Product.java          # Product entity
+|
+├── observer                  # Observer pattern for Alerts
+|   └── ConsoleAlertService.java
+|   └── EmailAlertService.java
+|   └── StockObserver.java
 │
 ├── service
 │   └── Inventory.java        # Singleton inventory manager
