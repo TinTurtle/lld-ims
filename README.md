@@ -1,18 +1,62 @@
-## Getting Started
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+# Inventory Management System (IMS) – Java Console Project
 
-## Folder Structure
+## 📌 Overview
 
-The workspace contains two folders by default, where:
+This is a **console-based Inventory Management System** implemented in Java.
+It allows users to manage products, track stock, create customer orders, and view sales history.
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+The project demonstrates **Object-Oriented Programming (OOP)** concepts, **Low-Level Design (LLD)**, and clean modular code organization.
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+---
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+## ⚙️ Features
 
-## Dependency Management
+### 🔹 Product Management
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+* Add new products with ID, name, price, quantity, and category
+* Search products by name, partial name, category, or price range
+* List all products
+* Sort products (by price or quantity in ascending/descending order)
+* Group products by category
+* View only available products (quantity > 0)
+* Check for low stock items with a custom threshold
+
+### 🔹 Stock Management
+
+* Increase or decrease stock of existing products
+* Error handling for invalid stock operations (e.g., decreasing below 0)
+
+### 🔹 Order Management
+
+* Create a new order
+* Add items (with quantity check)
+* Confirm an order (updates inventory automatically)
+* View all orders with order details and total price
+
+### 🔹 Robust User Input Handling
+
+* Uses `try-catch` for input mismatches
+* Clear error messages for invalid operations
+
+---
+
+## 📂 Package Structure
+
+```
+com.ims
+│── Main.java                # Entry point with menu-driven UI
+│
+├── model
+│   └── Product.java          # Product entity
+│
+├── service
+│   └── Inventory.java        # Singleton inventory manager
+│
+└── order
+    ├── Order.java            # Handles customer orders
+    └── OrderItem.java        # Represents product + quantity in an order
+```
+
+
+
