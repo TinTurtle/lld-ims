@@ -2,9 +2,10 @@ package com.ims;
 
 import com.ims.service.*;
 import com.ims.model.*;
-import com.ims.observer.*;
-import com.ims.order.*;
+import com.ims.order.Order;
 
+import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -13,6 +14,8 @@ import java.util.Scanner;
 public class Main {
     private static Scanner sc = new Scanner(System.in);
     private static Inventory inv = Inventory.getInstance();
+    private static List<Order> orders = new ArrayList<>();
+
     public static void main(String[] args) {
         boolean running = true;
 
@@ -32,11 +35,21 @@ public class Main {
             System.out.println("12. Decrease Stock");
             System.out.println("13. View Low Stock products");
             System.out.println("14. Create new order");
-            System.out.println("15. Exit");
+            System.out.println("15. View Orders");
+            System.out.println("16. Exit");
             System.out.println("================");
             System.out.print("Enter Choice : ");
-            int choice = sc.nextInt();
-            sc.nextLine();
+            
+            int choice = -1;
+            try{
+                choice = sc.nextInt();
+                sc.nextLine();
+            }catch(InputMismatchException e){
+                System.out.println("Invalud Input! Please enter a number.");
+                sc.nextLine();
+                continue;
+            }
+            
 
             switch (choice) {
                 case 1:// listing all products
@@ -95,7 +108,11 @@ public class Main {
                     createOrder();
                     break;
 
-                case 15: // exit the application
+                case 15: // View orders
+                    viewOrders();
+                    break;
+                
+                case 16:// exit the application
                     running = false;
                     break;
 
@@ -106,7 +123,7 @@ public class Main {
         }
     } 
 
-    //Methods to call inside the cases
+    //helper Methods to call inside the cases
     //2
     private static void searchByName(){
         System.out.println("Enter the name of the Product you want to search : ");
@@ -122,7 +139,7 @@ public class Main {
         System.out.println("Enter the partial name of the Product you want to search : ");
         String name = sc.nextLine();
         List<Product> products = inv.partialSearch(name);
-        if(p!=null){
+        if(!products.isEmpty()){
             for(Product p : products){
                 System.out.println(p);
             }
@@ -135,7 +152,7 @@ public class Main {
         System.out.println("Enter the Category of the Product you want to search : ");
         String cat = sc.nextLine();
         List<Product> products = inv.getProductsByCategory(cat);
-        if(p!=null){
+        if(!products.isEmpty()){
             for(Product p : products){
                 System.out.println(p);
             }
@@ -147,11 +164,13 @@ public class Main {
     private static void searchByPrice(){
         System.out.println("Enter the maximum price of your product : ");
         double max = sc.nextDouble();
+        sc.nextLine();
         System.out.println("Enter the minimum price of your product : ");
         double min = sc.nextDouble();
+        sc.nextLine();
 
         List<Product> products = inv.getProductsByPrice(min, max);
-        if(p!=null){
+        if(!products.isEmpty()){
             for(Product p : products){
                 System.out.println(p);
             }
@@ -161,8 +180,8 @@ public class Main {
 
     //6
     private static void availableProducts(){
-        List<Product> products = inv.getAvailableProducts()
-        if(p!=null){
+        List<Product> products = inv.getAvailableProducts();
+        if(!products.isEmpty()){
             for(Product p : products){
                 System.out.println(p);
             }
@@ -180,7 +199,7 @@ public class Main {
         if(num==1) ascending = true;
 
         List<Product> products = inv.getProductsSortedByPrice(ascending);
-        if(p!=null){
+        if(!products.isEmpty()){
             for(Product p : products){
                 System.out.println(p);
             }
@@ -198,7 +217,7 @@ public class Main {
         if(num==1) ascending = true;
 
         List<Product> products = inv.getProductsSortedByQuantity(ascending);
-        if(p!=null){
+        if(!products.isEmpty()){
             for(Product p : products){
                 System.out.println(p);
             }
@@ -211,10 +230,10 @@ public class Main {
         Map<String, List<Product>> pMap = inv.groupProductsByCategory();
 
         if(pMap!=null){
-            for(Map.Entry<String,List<Product>> me : pMap){
+            for(Map.Entry<String,List<Product>> me : pMap.entrySet()){
                 System.out.println(me.getKey());
                 List<Product> products = me.getValue();
-                if(p!=null){
+                if(!products.isEmpty()){
                     for(Product p : products){
                         System.out.println(p);
                     }
@@ -228,12 +247,15 @@ public class Main {
     private static void addProduct(){
         System.out.println("Enter product id: "); 
         int id = sc.nextInt();  
+        sc.nextLine();
         System.out.println("Enter product name:");
         String name = sc.nextLine();   
         System.out.println("Enter product price:");
-        double price = sc.nextDouble();   
-        System.out.println("Enter product qunatity:");
+        double price = sc.nextDouble(); 
+        sc.nextLine();  
+        System.out.println("Enter product quantity:");
         int qty = sc.nextInt();   
+        sc.nextLine();
         System.out.println("Enter product category:");
         String cat = sc.nextLine(); 
 
@@ -246,29 +268,37 @@ public class Main {
     private static void increaseStock(){
         System.out.println("Enter product id: "); 
         int id = sc.nextInt();  
+        sc.nextLine(); 
         System.out.println("Enter the no. of stock to be increased:");
         int qty = sc.nextInt();
+        sc.nextLine(); 
         inv.increaseStock(id, qty);
-        break;
     }
 
     //12
     private static void decreaseStock(){
         System.out.println("Enter product id: "); 
         int id = sc.nextInt();  
+        sc.nextLine(); 
         System.out.println("Enter the no. of stock to be decreased:");
         int qty = sc.nextInt();
-        inv.increaseStock(id, qty);
-        break;
+        sc.nextLine(); 
+        try {
+            inv.decreaseStock(id, qty);
+        } catch (IllegalArgumentException e) {
+            System.out.println("⚠️ " + e.getMessage());
+        }
+
     }
 
     //13
     private static void viewLowStockProducts(){
         System.out.println("Enter the threshold for low stock : ");
         int threshold = sc.nextInt();
+        sc.nextLine(); 
 
         List<Product> products = inv.getLowStockProducts(threshold);
-        if(p!=null){
+        if(!products.isEmpty()){
             for(Product p : products){
                 System.out.println(p);
             }
@@ -278,7 +308,64 @@ public class Main {
 
     //14
     private static void createOrder(){
-        return;
+        Order order = new Order();
+        boolean addingItems = true;
+        while (addingItems) {
+            System.out.println("Choose your option: ");
+            System.out.println("1.Add more Items");
+            System.out.println("2.Confirm Order");
+
+            int choice = sc.nextInt();
+            sc.nextLine();
+            switch(choice){
+                case 1:
+                    System.out.print("Enter the Product ID ");
+                    int productId = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter requried quantity ");
+                    int qty = sc.nextInt();
+                    sc.nextLine();
+
+                    Product product = Inventory.getInstance().getProductById(productId);
+
+                    if (product != null) {
+                        try{
+                             order.addItem(product, qty);
+                             System.out.println("Item added successfully!");
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("⚠️ " + e.getMessage());
+                        }
+                    } else {
+                        System.out.println("Invalid Product ID!");
+                    }
+                    
+                    break;
+                case 2:
+                    order.confirmOrder();
+                    System.out.println(order);
+                    orders.add(order);
+                    addingItems = false;
+                    break;
+
+                default:
+                    System.out.println("Invalid Input!");
+                    break;
+            }
+        }
+    }
+    //15
+    private static void viewOrders(){
+        if(orders != null){
+            for(Order o : orders){
+                System.out.println(o);
+                o.showItems();
+                System.out.println("-------------------------");
+            }
+        }
+        else{
+            System.out.println("No orders found!");
+            return;
+        }
     }
 }
 
